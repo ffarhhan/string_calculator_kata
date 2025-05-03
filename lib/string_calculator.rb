@@ -1,14 +1,16 @@
 class StringCalculator
   def self.add(input)
-    return 0 if input == ""
+    return 0 if input.strip.empty?
+
+    delimiter_pattern = /[\n,]/
 
     if input.start_with?("//")
       delimiter, input = input.split("\n", 2)
-      delimiter = delimiter[2..]
-      numbers = input.split(/[\n,#{Regexp.escape(delimiter)}]/).map(&:to_i)
-    else
-      numbers = input.split(/[\n,]/).map(&:to_i)
+      custom_delimiter = Regexp.escape(delimiter[2..])
+      delimiter_pattern = /[\n,#{custom_delimiter}]/
     end
+
+    numbers = input.split(delimiter_pattern).map(&:to_i)
 
     negatives = numbers.select { |n| n < 0 }
     raise "negative numbers not allowed #{negatives.join(',')}" if negatives.any?
